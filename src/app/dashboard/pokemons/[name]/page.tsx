@@ -1,24 +1,27 @@
-import { Pokemon } from '@/pokemons';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Pokemon, PokemonsResponse } from '@/pokemons';
 
 interface Props {
   params: {
-    id: string;
+    name: string;
   };
 }
 
 // Esto se ejecuta en build time (npm run build), osea construye los 151 pokemons de manera estática.
 export async function generateStaticParams() {
-  const static151Pokemons = Array.from({ length: 151 }).map((_, index) => `${index + 1}`);
-  return static151Pokemons.map((id) => ({ id: id }));
+  const data: PokemonsResponse = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`).then((res) => res.json());
+   const static151Pokemons =  data.results.map((pokemon) => ({
+    name: pokemon.name,
+  }));
+  return static151Pokemons.map(({ name}) => ({ name: name }));
 }
 
 // Metadata dinámica
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const pokemon = await getPokemon(params.id);
+    const pokemon = await getPokemon(params.name);
     return {
       title: `Pokemon - ${pokemon.name}`,
       description: `Información detallada de ${pokemon.name}`,
@@ -31,9 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const getPokemon = async (id: string): Promise<Pokemon> => {
+const getPokemon = async (name: string): Promise<Pokemon> => {
   try {
-    const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
+    const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, {
       // cache: 'force-cache',
       next: {
         revalidate: 60 * 60 * 24, // 1 day
@@ -47,7 +50,7 @@ const getPokemon = async (id: string): Promise<Pokemon> => {
 };
 
 export default async function PokemonPage({ params }: Props) {
-  const pokemon = await getPokemon(params.id);
+  const pokemon = await getPokemon(params.name);
   return (
     <div className="bg-gray-100 p-5">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">

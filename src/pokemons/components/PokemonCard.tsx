@@ -31,7 +31,7 @@ export const PokemonCard = ({ pokemon }: Props) => {
           <h2 className="text-lg font-semibold capitalize mb-1">{pokemon.name}</h2>
           <span className="text-sm text-gray-600">ID: {pokemon.id}</span>
         </div>
-        <Link href={`/dashboard/pokemon/${pokemon.id}`} className="text-blue-500 hover:text-blue-600 flex items-center justify-center mt-2">
+        <Link href={`/dashboard/pokemons/${pokemon.name}`} className="text-blue-500 hover:text-blue-600 flex items-center justify-center mt-2">
           <IoInformationCircleOutline size={20} className="mr-1" />
           Más Información
         </Link>
