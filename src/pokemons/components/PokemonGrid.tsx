@@ -1,5 +1,5 @@
+'use client';
 import { PokemonCard, SimplePokemon } from '@/pokemons';
-
 
 interface Props {
   pokemons: SimplePokemon[];
